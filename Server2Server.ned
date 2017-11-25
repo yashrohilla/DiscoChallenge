@@ -20,12 +20,19 @@ simple Txc1
         output out;
 }
 
+simple Txc2
+{
+    gates:
+        input in;
+        output out;
+}
+
 network PingPong
 {
     submodules:
-        ping: Txc1;
-        pong: Txc1;
+        S1: Txc1;
+        S2: Txc2;
     connections:
-        ping.out --> {  delay=1000ms;datarate=1Mbps;  } --> pong.in;
-        ping.in <-- {  delay=exponential(1s);datarate=1Mbps;  } <-- pong.out;
+        S1.out --> {  datarate = 8Mbps;  } --> S2.in;
+        S1.in <-- {  datarate = 8Mbps;  } <-- S2.out;
 }

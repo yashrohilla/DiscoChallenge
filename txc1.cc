@@ -19,21 +19,38 @@ protected:
   void setByteLength(int64_t);
 };
 
-Define_Module(Txc1);
+class Txc2 : public cSimpleModule
+{
+protected:
+  virtual void handleMessage(cMessage *msg) override;
+  void setByteLength(int64_t);
+};
 
+Define_Module(Txc1);
+Define_Module(Txc2);
 
 void Txc1::initialize()
 {
-    if(strcmp("ping", getName()) == 0) {
-        cPacket *data = new cPacket("data");
+    if(strcmp("S1", getName()) == 0)
+    {
+        cPacket *data = new cPacket("datanew");
         data->setByteLength(524288);
-        send(data, "out");
+        sendDelayed(data, 1.0, "out");
     }
 }
 
 void Txc1::handleMessage(cMessage *msg)
 {
-    cPacket *data = new cPacket("data");
-    data->setByteLength(524288);
-    send(data, "out");
+
+        cPacket *data = new cPacket("datafromS1toS2");
+        data->setByteLength(524288);
+        sendDelayed(data, 1.0, "out");
+}
+
+void Txc2::handleMessage(cMessage *msg)
+{
+
+        cPacket *data = new cPacket("datafromS2toS1");
+        data->setByteLength(524288);
+        sendDelayed(data, exponential(1), "out");
 }
